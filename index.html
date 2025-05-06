@@ -1,0 +1,87 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ananta Waste Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    
+  </style>
+</head>
+<body class="bg-white text-gray-800">
+  {% if messages %}
+  <ul>
+    {% for message in messages %}
+      <li class="alert {{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+
+  <!-- Header -->
+  <header class="flex justify-between items-center p-4 bg-green-600 text-white shadow-md">
+    <h1 class="text-2xl font-bold">Ananta Waste Management</h1>
+    <nav>
+      <a href="#features" class="mx-4 hover:underline">Features</a>
+      <a href="#about" class="mx-4 hover:underline">About</a>
+      <a href="#roles" class="mx-4 hover:underline">Login</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+ 
+<section class="flex flex-col md:flex-row items-center justify-between bg-green-100 p-8">
+    <div class="md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
+      <img src="awmp.jpg" alt="Ananta Waste Management Logo" class="w-40 mb-6 mx-auto">
+      <h2 class="text-4xl font-bold mb-4">Manage Waste Smarter, Cleaner, Faster</h2>
+      <p class="text-lg mb-6">Connect clients, workers, and administrators in one powerful platform.</p>
+    </div>
+    <img src="https://t3.ftcdn.net/jpg/05/35/21/18/360_F_535211864_d3ncCVHYkEV0bGxOL12LhKu0xgh9kGo5.jpg" alt="Waste Management Illustration" class="md:w-1/2 mt-8 md:mt-0">
+  </section>
+  
+  
+
+  <!-- Role Selection -->
+  <section id="roles" class="py-12 bg-white text-center">
+    <h3 class="text-3xl font-bold mb-8">Login As</h3>
+    <div class="flex flex-wrap items-center justify-center gap-8">
+        
+        <a href="{% url 'login'%}" class="w-64 p-6 bg-gray-100 rounded-xl shadow hover:bg-green-50 transition" >
+            <div class="flex items-center flex-col">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKje66pETxHtUCbIQoo91zH6OqBaXOHGWN9Q&s" height="50" width="50"> 
+        <h4 class="text-xl font-semibold">Admin</h4>
+        <p class="text-sm text-gray-600">Manage users, monitor activity, and track cleanup progress.</p>
+    </div></a>
+      <a href="{% url 'login'%}" class="w-64 p-6 bg-gray-100 rounded-xl shadow hover:bg-green-50 transition">
+        <div class="flex items-center flex-col">
+        <img src="https://tse1.mm.bing.net/th?id=OIP.PeukQTRz2anEaB6LmRtAlAAAAA&pid=Api&P=0&h=220" height="90" width="90">
+        <h4 class="text-xl font-semibold">Client</h4>
+        <p class="text-sm text-gray-600">Report garbage, request pickups, and monitor cleaning status.</p></div>
+      </a>
+      <a href="{% url 'login'%}" class="w-64 p-6 bg-gray-100 rounded-xl shadow hover:bg-green-50 transition">
+        <div class="flex items-center flex-col">
+        <img src="https://img.freepik.com/premium-vector/sanitation-worker-icon-simple-vector-illustration_404166-227.jpg" height="70"width="70">
+        
+        <h4 class="text-xl font-semibold">Worker</h4>
+        <p class="text-sm text-gray-600">View assigned tasks and mark completed cleanups.</p>
+    </div></a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-12 bg-green-50 text-center">
+    <h3 class="text-3xl font-bold mb-6">Key Features</h3>
+    <div class="grid md:grid-cols-3 gap-6 px-6">
+      <div class="p-4 bg-white rounded shadow">AI Image Detection for Garbage Type</div>
+      <div class="p-4 bg-white rounded shadow">Real-time Worker Assignment</div>
+      <div class="p-4 bg-white rounded shadow">Reports & Analytics Dashboard</div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-green-700 text-white p-6 text-center">
+    <p>&copy; 2025 Smart Waste Management. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>

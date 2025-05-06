@@ -1,0 +1,112 @@
+<!-- templates/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Waste Management</title>
+  <style>
+    /* Same styles reused */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body { background: #e0f2f1; display: flex; align-items: center; justify-content: center; height: 100vh; }
+    .container { background: #fff; border-radius: 10px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); overflow: hidden; max-width: 900px; width: 100%; display: flex; }
+    .form-container { flex: 1; padding: 40px; }
+    .form-container h2 { margin-bottom: 20px; color: #2e7d32; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: bold; }
+    .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+    .form-group button { background-color: #2e7d32; color: #fff; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; width: 100%; }
+    .form-group button:hover { background-color: #1b5e20; }
+    .side { background-color: #2e7d32; color: #fff; flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center; text-align: center; }
+    .side h1 { margin-bottom: 20px; }
+    .form-footer { text-align: center; margin-top: 15px; }
+    .form-footer a { color: #2e7d32; text-decoration: underline; font-size: 0.95rem; }
+    .popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #dff0d8;
+      color: #3c763d;
+      border: 1px solid #d6e9c6;
+      padding: 15px 25px;
+      border-radius: 5px;
+      z-index: 9999;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      animation: fadeInOut 4s forwards;
+    }
+    
+    .popup.error {
+      background-color: #f2dede;
+      color: #a94442;
+      border-color: #ebccd1;
+    }
+    
+    .popup button {
+      background: transparent;
+      border: none;
+      color: inherit;
+      font-size: 20px;
+      font-weight: bold;
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      cursor: pointer;
+    }
+    
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(-20px); }
+      10% { opacity: 1; transform: translateY(0); }
+      90% { opacity: 1; }
+      100% { opacity: 0; display: none; }
+    }
+    
+  </style>
+  <script>
+    function closePopup() {
+      const popup = document.getElementById("popup-message");
+      if (popup) popup.style.display = "none";
+    }
+  </script>
+  
+</head>
+<body>
+ 
+  <div class="container">
+    {% if messages %}
+    <div id="popup-message" class="popup">
+      {% for message in messages %}
+        <span class="{{ message.tags }}">{{ message }}</span>
+      {% endfor %}
+      <button onclick="closePopup()">×</button>
+    </div>
+  {% endif %}
+  
+  
+  
+    <div class="form-container">
+      <h2>Login</h2>
+      <form action="/login" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" name="username" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" name="password" required />
+        </div>
+        <div class="form-group">
+          <button type="submit">Login</button>
+        </div>
+      </form>
+      <div class="form-footer">
+        <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+      </div>
+    </div>
+    <div class="side">
+      <h1>Waste Management Ramgarh</h1>
+      <p>Help keep your environment clean and green and connected</p>
+    </div>
+  </div>
+</body>
+</html>

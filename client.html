@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Garbage Report Portal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
+  <style>
+    body {
+      background-color: #f0fdf4;
+    }
+
+    .navbar-custom {
+      background-color: #16a34a;
+    }
+
+    .navbar-brand, .nav-link {
+      color: white !important;
+    }
+
+    .card {
+      border: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    #map {
+      height: 300px;
+      border-radius: 10px;
+    }
+
+    .preview {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 10px;
+    }
+
+    #chatbot-fab-wrapper {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+    }
+
+    #chatbot-iframe {
+      display: none;
+      width: 350px;
+      height: 450px;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    #chatbot-fab-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #10b981;
+      color: white;
+      font-size: 28px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .how-it-works img {
+      height: 150px;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-custom shadow-sm">
+  <div class="container">
+    <a class="navbar-brand" href="#">Hello {{request.user.username}}</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#" style="background:purple"> 10 Green Coins</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Reports</a></li>
+        <li class="white" style="background:orange"><a href="{% url 'logout' %}">Logout</a>
+          ></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+{% if messages %}
+  {% for message in messages %}
+    <script>alert("{{ message }}");</script>
+  {% endfor %}
+{% endif %}
+
+
+<!-- MAIN CONTENT -->
+<div class="container my-4">
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="card p-4">
+        <h4 class="text-success">Submit a Garbage Report</h4>
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="image" class="form-label">Upload or Capture Image</label>
+            <input type="file" accept="image/*" capture="environment" class="form-control" id="image" name="image" onchange="previewImage(event)">
+            <img id="preview" class="preview"/>
+          </div>
+          <div class="mb-3">
+            <label for="query" class="form-label">Comments</label>
+            <textarea class="form-control" name="query" id="query" rows="3" placeholder="Write something..."></textarea>
+          </div>
+          <input type="hidden" id="latitude" name="latitude">
+          <input type="hidden" id="longitude" name="longitude">
+          <button type="submit" class="btn btn-success w-100">Submit Report</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <h5 class="text-center">📍 Your Location & Nearby Bins</h5>
+        <div id="map" class="my-2"></div>
+        <div class="text-muted small" id="location"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS SECTION -->
+  <div class="row mt-5 how-it-works">
+    <h3 class="text-center text-success mb-4">✨ How It Works</h3>
+    
+    <div class="col-md-4">
+      <div class="card p-3 text-center">
+        <img src="https://cdn-icons-png.flaticon.com/512/2920/2920244.png" alt="Scan Garbage" class="mx-auto mb-2">
+        <h5>1. Scan or Upload</h5>
+        <p>Click or capture a photo of garbage using your phone or upload an image from your gallery.</p>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card p-3 text-center">
+        <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Submit Location" class="mx-auto mb-2">
+        <h5>2. Submit Location</h5>
+        <p>The system automatically tags your current location to alert authorities nearby.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-3 text-center">
+        <img src="https://cdn-icons-png.flaticon.com/512/4149/4149685.png" alt="Track Progress" class="mx-auto mb-2">
+        <h5>3. Track Cleanup</h5>
+        <p>Authorities get notified. You can revisit to see if the garbage has been cleaned.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Leaflet Map Script -->
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+<script>
+  window.onload = function () {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        document.getElementById("latitude").value = position.coords.latitude;
+        document.getElementById("longitude").value = position.coords.longitude;
+
+        document.getElementById("location").innerHTML = `
+          <strong>Latitude:</strong> ${position.coords.latitude.toFixed(5)} |
+          <strong>Longitude:</strong> ${position.coords.longitude.toFixed(5)}
+        `;
+
+        loadMap(position.coords.latitude, position.coords.longitude);
+      });
+    } else {
+      alert("Geolocation is not supported.");
+    }
+  };
+
+  function loadMap(lat, lon) {
+    var map = L.map('map').setView([lat, lon], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    L.marker([lat, lon]).addTo(map).bindPopup("You are here").openPopup();
+
+    const bins = [
+      { lat: lat + 0.001, lon: lon + 0.001, label: "Bin A" },
+      { lat: lat - 0.0012, lon: lon - 0.0008, label: "Bin B" },
+    ];
+
+    bins.forEach(bin => {
+      L.marker([bin.lat, bin.lon]).addTo(map).bindPopup(bin.label);
+    });
+  }
+
+  function previewImage(event) {
+    const reader = new FileReader();
+    reader.onload = function () {
+      document.getElementById('preview').src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  }
+</script>
+
+<!-- Chatbot Floating Button -->
+<div id="chatbot-fab-wrapper">
+  <button id="chatbot-fab-btn">💬</button>
+  <iframe id="chatbot-iframe" src="/chatbot"></iframe>
+</div>
+
+<script>
+  const fab = document.getElementById("chatbot-fab-btn");
+  const iframe = document.getElementById("chatbot-iframe");
+
+  fab.addEventListener("click", () => {
+    iframe.style.display = iframe.style.display === "block" ? "none" : "block";
+  });
+</script>
+
+</body>
+</html>

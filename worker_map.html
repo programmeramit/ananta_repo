@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Worker Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FontAwesome for icons -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f3f4f6;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: linear-gradient(to right, #6366f1, #8b5cf6);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .navbar h1 {
+      font-size: 1.5rem;
+    }
+
+    .navbar .user-info {
+      font-size: 1rem;
+    }
+
+    /* Card Grid */
+    .container {
+      padding: 2rem;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: linear-gradient(135deg, #e0e7ff, #ede9fe);
+      border-radius: 16px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      padding: 1.5rem;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      left: -20%;
+      width: 160%;
+      height: 160%;
+      background: radial-gradient(circle at top left, rgba(255,255,255,0.2), transparent);
+      transform: rotate(25deg);
+      z-index: 0;
+    }
+
+    .card h2, .card p, .card i {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card h2 {
+      font-size: 1.3rem;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #4f46e5;
+    }
+
+    .card i {
+      font-size: 2rem;
+      color: #6d28d9;
+      margin-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    /* Map Container */
+    #map-container {
+      margin: 2rem;
+      width: calc(100% - 4rem);
+      height: 720px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <h1>🚛 Smart Garbage Dashboard</h1>
+    <div class="user-info">Logged in as <strong>{{ request.user.username }}</strong></div>
+  </div>
+
+  <!-- Dashboard Cards -->
+  <div class="container">
+    <div class="card-grid">
+
+      <div class="card">
+        <i class="fas fa-dumpster"></i>
+        <h2>Total Bins Collected</h2>
+        <p>134</p>
+      </div>
+
+      <div class="card">
+        <i class="fas fa-clock"></i>
+        <h2>Pending Pickups</h2>
+        <p>9</p>
+      </div>
+
+      <div class="card">
+        <i class="fas fa-calendar-day"></i>
+        <h2>Next Pickup</h2>
+        <p>7:00 AM Tomorrow</p>
+      </div>
+
+      <div class="card">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h2>Full Bins Alert</h2>
+        <p>3 Bins</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Map Section -->
+  <div id="map-container">
+    {{ map|safe }}
+  </div>
+
+</body>
+</html>
